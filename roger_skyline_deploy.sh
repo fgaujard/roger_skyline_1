@@ -1,8 +1,8 @@
 #----------Menu Starter-------
 echo "\033[32mHello, welcome to the automation setup of local website"
-echo "Do you want setup this Debian VM ?"
-echo "Warning !!! This automation was only test on Debian 9.8 !"
-echo "Do you want continue the setup ?\033[0m"
+echo "Do you want setup this Debian VM ?\033[0m"
+echo "\033[41mWarning !!! This automation was only test on Debian 9.8 in VM on the 42 Mac OS X\033[0m"
+echo "\033[42;30mDo you want continue the setup ?\033[0m"
 read yesno
 if [ "$yesno" = Y ] || [ "$yesno" = y ]; then
 	#--------Package install------
@@ -18,6 +18,23 @@ if [ "$yesno" = Y ] || [ "$yesno" = y ]; then
 	mv files/interfaces /etc/network/
 	rm -f /etc/ssh/sshd_config
 	mv files/sshd_config /etc/ssh/
+	service networking restart
+	service ssh restart
+	service sshd restart
+	#--------Public Keys---------
+	echo "You have to enter this command in your Mac OS X terminal :"
+	echo "ssh-keygen -t rsa"
+	echo "Now you have two files : << id_rsa >> and << id_rsa.pub >>"
+	echo "Send id_rsa.pub with this command with the good username :"
+	echo "ssh-copy-id -i id_rsa.pub user@10.12.15.2 -p 55555"
+	echo "Did you have send the public key ? write : << yes i have >> "
+	read yih
+	while [ "$yih" -ne "yes i have" ]
+	do
+		echo "Error, write << yes i have >>"
+		read yih
+	done
+	
 	#-----------firewall--------
 	iptables -F
 	iptables -X
@@ -57,6 +74,15 @@ if [ "$yesno" = Y ] || [ "$yesno" = y ]; then
 	#------------web part---------
 	rm -f /var/www/html/index.html
 	mv web/* /var/www/html
+	mkdir certs
+	cd certs
+	openssl genrsa -des3 -out server.key 1024 
+	openssl req -new -key server.key -out server.csr
+	cp server.key server.key.org
+	openssl rsa -in server.key.org -out server.key
+	openssl x509 -req -days -365 -in server.csr -signkey server.key -out server.crt
+	cd ..
+	mv certs /var/
 	rm -f /etc/apache2/sites-available/default-ssl.conf
 	mv files/default-ssl.conf /etc/apache2/sites-available/
 	rm -f /etc/apache2/sites-available/000-default.conf
@@ -68,7 +94,7 @@ if [ "$yesno" = Y ] || [ "$yesno" = y ]; then
 	systemctl reload apache2
 	#---------Reboot sys----------
 	reboot
-elif [ "$yesno" = N ] || ["$yesno" = n ]; then
+elif [ "$yesno" = N ] || [ "$yesno" = n ]; then
 	echo "\033[30;42m[ Annulation by quit ]\033[0m"
 	exit 0
 else
