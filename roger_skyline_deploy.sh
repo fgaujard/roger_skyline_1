@@ -21,7 +21,6 @@ if [ "$yesno" = Y ] || [ "$yesno" = y ]; then
 	sudo rm -f /etc/ssh/sshd_config
 	sudo mv files/sshd_config /etc/ssh/
 	sudo service networking restart
-	sudo service ssh restart
 	sudo service sshd restart
 	#--------Public Keys---------
 	echo "You have to enter this command in your Mac OS X terminal :"
@@ -36,7 +35,9 @@ if [ "$yesno" = Y ] || [ "$yesno" = y ]; then
 		echo "Error, write << yes i have >>"
 		read yih
 	done
-	
+	sudo rm -f /etc/ssh/ssh_config
+	sudo mv files/files2/sshd_config
+	sudo service sshd restart
 	#-----------firewall--------
 	sudo iptables -F
 	sudo iptables -X
@@ -54,9 +55,13 @@ if [ "$yesno" = Y ] || [ "$yesno" = y ]; then
 	sudo iptables -A INPUT -i enp0s3 -p icmp -j ACCEPT
 	sudo iptables -A OUTPUT -o enp0s3 -p icmp -j ACCEPT
 	sudo iptables-save > /etc/iptables.rules
+	sudo rm -f /etc/network/interfaces
+	sudo mv files/files2/interfaces
 	sudo service networking restart
-	sudo service ssh restart
+	sudo service sshd restart
 	#----------fail2ban----------
+	sudo rm -f
+	sudo mv
 	#---------portsentry---------
 	sudo rm -f /etc/default/portsentry
 	sudo mv files/portsentry /etc/default/
