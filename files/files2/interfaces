@@ -13,3 +13,4 @@ iface enp0s3 inet static
 	address	10.12.15.2
 	netmask 255.255.255.252
 	gateway	10.12.254.254
+	pre-up iptables-restore < /etc/iptables.rules	
