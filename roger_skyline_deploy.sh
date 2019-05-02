@@ -39,21 +39,37 @@ if [ "$yesno" = Y ] || [ "$yesno" = y ]; then
 	sudo mv files/files2/sshd_config
 	sudo service sshd restart
 	#-----------firewall--------
+	#RESET
 	sudo iptables -F
 	sudo iptables -X
+	#DROP
 	sudo iptables -P INPUT DROP
 	sudo iptables -P OUTPUT DROP
 	sudo iptables -P FORWARD DROP
-	sudo iptables -A INPUT -p tcp -i enp0s3 --dport 55555 -j ACCEPT
-	sudo iptables -A OUTPUT -p tcp -o enp0s3 --dport 55555 -j ACCEPT
-	sudo iptables -A INPUT -p tcp -i enp0s3 --dport 80 -j ACCEPT
-	sudo iptables -A OUTPUT -p tcp -o enp0s3 --dport 80 -j ACCEPT
-	sudo iptables -A INPUT -p tcp -i enp0s3 --dport 443 -j ACCEPT
-	sudo iptables -A OUTPUT -p tcp -o enp0s3 --dport 443 -J ACCEPT
-	sudo iptables -I INPUT 2 -i lo -j ACCEPT
-	sudo iptables -I OUTPUT 2 -o lo -j ACCEPT
-	sudo iptables -A INPUT -i enp0s3 -p icmp -j ACCEPT
-	sudo iptables -A OUTPUT -o enp0s3 -p icmp -j ACCEPT
+	#ACCEPT
+	#Connexions etablie
+	sudo iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+	sudo iptables -A OUTPUT -m state --state REALTED,ESTABLISHED -j ACCEPT
+	#Loop-Back
+	sudo iptables -t filter -A INPUT -i lo -j ACCEPT
+	sudo iptables -t filter -A OUTPUT -o lo -j ACCEPT
+	#Ping
+	sudo iptables -t filter -A INPUT -p icmp -j ACCEPT
+	sudo iptables -t filter -A OUTPUT -p icmp -j ACCEPT
+	#DNS
+	sudo iptables -t filter -A INPUT -p tcp --dport 53 -j ACCEPT
+	sudo iptables -t filter -A OUTPUT -p tcp --dport 53 -j ACCEPT
+	sudo iptables -t filter -A INPUT -p udp --dport 53 -j ACCEPT
+	sudo iptables -t filter -A OUTPUT -p udp --dport 53 -j ACCEPT
+	#NTP (Serveur a l'h)
+	sudo iptables -t filter -A OUTPUT -p udp --dport 123 -j ACCEPT
+	#HTTP/HTTPS
+	sudo iptables -t filter -A INPUT -p tcp --dport 80 -j ACCEPT
+	sudo iptables -t filter -A OUTPUT -p tcp --dport 80 -j ACCEPT
+	sudo iptables -t filter -A INPUT -p tcp --dport 443 -j ACCEPT
+	sudo iptables -t filter -A OUTPUT -p tcp --dport 443 -j ACCEPT
+	sudo iptables -f filter -A INPUT -p tcp --dport 8443 -j ACCEPT
+	#Save rules
 	sudo iptables-save > /etc/iptables.rules
 	sudo rm -f /etc/network/interfaces
 	sudo mv files/files2/interfaces
