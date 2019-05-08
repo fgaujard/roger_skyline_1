@@ -14,7 +14,7 @@ if [ "$yesno" = Y ] || [ "$yesno" = y ]; then
 	adduser $usr sudo
 	usermod -aG sudo $usr
 	service sudo restart
-	exit
+	su $usr
 	#-----fix ip and netmask-----
 	sudo rm -f /etc/network/interfaces
 	sudo mv files/interfaces /etc/network/
