@@ -76,8 +76,8 @@ if [ "$yesno" = Y ] || [ "$yesno" = y ]; then
 	sudo service networking restart
 	sudo service sshd restart
 	#----------fail2ban----------
-	sudo rm -f
-	sudo mv
+#	sudo rm -f
+#	sudo mv
 	#---------portsentry---------
 	sudo rm -f /etc/default/portsentry
 	sudo mv files/portsentry /etc/default/
