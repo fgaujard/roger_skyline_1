@@ -1,0 +1,13 @@
+---
+- hosts: all
+  tasks:
+      - name: Install of package
+        apt: pkg={{ item }} state= installed
+        with_items:
+            - vim
+              sudo
+              iptables
+              portsentry
+              apache2
+              fail2ban
+              mailutils
