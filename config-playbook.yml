@@ -2,12 +2,15 @@
 - hosts: all
   tasks:
       - name: Install of package
-        apt: pkg={{ item }} state= installed
+        apt: 
+            - update_cache=yes
+            - name={{item}}
+            - state=latest
         with_items:
             - vim
-              sudo
-              iptables
-              portsentry
-              apache2
-              fail2ban
-              mailutils
+            - sudo
+            - iptables
+            - portsentry
+            - apache2
+            - fail2ban
+            - mailutils
