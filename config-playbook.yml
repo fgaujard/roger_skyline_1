@@ -1,16 +1,18 @@
 ---
 - hosts: all
+  remote_user: root
+
   tasks:
-      - name: Install of package
+  - name: Install of package
         apt: 
-            - update_cache=yes
-            - name={{item}}
-            - state=latest
+          update_cache=yes
+          name={{item}}
+          state=latest
         with_items:
-            - vim
-            - sudo
-            - iptables
-            - portsentry
-            - apache2
-            - fail2ban
-            - mailutils
+        - vim
+        - sudo
+        - iptables
+        - portsentry
+        - apache2
+        - fail2ban
+        - mailutils
